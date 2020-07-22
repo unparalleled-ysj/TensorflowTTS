@@ -23,7 +23,7 @@ import numpy as np
 import tensorflow as tf
 
 from tensorflow_tts.datasets.abstract_dataset import AbstractDataset
-from tensorflow_tts.processor.ljspeech import symbols
+from tensorflow_tts.processor.chinese_character import _symbol_to_id, _eos 
 from tensorflow_tts.utils import find_files
 
 
@@ -139,7 +139,7 @@ class CharactorMelDataset(AbstractDataset):
             char_length = self.char_lengths[i]
 
             # add eos token for charactor since charactor is original token.
-            charactor = np.concatenate([charactor, [len(symbols) - 1]], -1)
+            charactor = np.concatenate((charactor, [_symbol_to_id[_eos]]), axis=-1)
             char_length += 1
 
             # padding mel to make its length is multiple of reduction factor.
@@ -167,7 +167,7 @@ class CharactorMelDataset(AbstractDataset):
                 "input_ids": charactor,
                 "input_lengths": char_length,
                 "speaker_ids": 0,
-                "mel_outputs": mel,
+                "mel_gts": mel,
                 "mel_lengths": mel_length,
                 "g_attentions": g_attention,
             }
@@ -207,7 +207,7 @@ class CharactorMelDataset(AbstractDataset):
             "input_ids": self.char_pad_value,
             "input_lengths": 0,
             "speaker_ids": 0,
-            "mel_outputs": self.mel_pad_value,
+            "mel_gts": self.mel_pad_value,
             "mel_lengths": 0,
             "g_attentions": self.ga_pad_value,
         }
@@ -220,7 +220,7 @@ class CharactorMelDataset(AbstractDataset):
             else [self.max_char_length],
             "input_lengths": [],
             "speaker_ids": [],
-            "mel_outputs": [None, 80]
+            "mel_gts": [None, 80]
             if self.use_fixed_shapes is False
             else [self.max_mel_length, 80],
             "mel_lengths": [],
@@ -241,7 +241,7 @@ class CharactorMelDataset(AbstractDataset):
             "input_ids": tf.int32,
             "input_lengths": tf.int32,
             "speaker_ids": tf.int32,
-            "mel_outputs": tf.float32,
+            "mel_gts": tf.float32,
             "mel_lengths": tf.int32,
             "g_attentions": tf.float32,
         }

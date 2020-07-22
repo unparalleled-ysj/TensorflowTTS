@@ -14,7 +14,9 @@
 # limitations under the License.
 """Tacotron-2 Config object."""
 
-from tensorflow_tts.processor.ljspeech import symbols
+from tensorflow_tts.processor.ljspeech import symbols as en_symbols
+from tensorflow_tts.processor.chinese_character import symbols as cnc_symbols
+from tensorflow_tts.processor.chinese_phoneme import symbols as cnp_symbols
 
 
 class Tacotron2Config(object):
@@ -22,7 +24,7 @@ class Tacotron2Config(object):
 
     def __init__(
         self,
-        vocab_size=len(symbols),
+        vocab_size=len(cnc_symbols),
         embedding_hidden_size=512,
         initializer_range=0.02,
         layer_norm_eps=1e-6,

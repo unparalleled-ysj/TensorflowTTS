@@ -1,1 +1,3 @@
 from tensorflow_tts.processor.ljspeech import LJSpeechProcessor
+from tensorflow_tts.processor.chinese_character import ChineseProcessor_Character
+from tensorflow_tts.processor.chinese_phoneme import ChineseProcessor_Phoneme
