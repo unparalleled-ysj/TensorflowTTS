@@ -30,5 +30,7 @@ ljspeech
 /Pipfile
 /Pipfile.lock
 /datasets
-/examples/tacotron2/exp/
+/examples/*/exp/
 /temp/
+*_synthesis_sentences_*
+inference.py

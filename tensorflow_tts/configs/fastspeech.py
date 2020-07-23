@@ -16,7 +16,9 @@
 
 import collections
 
-from tensorflow_tts.processor.ljspeech import symbols
+from tensorflow_tts.processor.ljspeech import symbols as en_symbols
+from tensorflow_tts.processor.chinese_character import symbols as cnc_symbols
+from tensorflow_tts.processor.chinese_phoneme import symbols as cnp_symbols
 
 SelfAttentionParams = collections.namedtuple(
     "SelfAttentionParams",
@@ -45,7 +47,7 @@ class FastSpeechConfig(object):
 
     def __init__(
         self,
-        vocab_size=len(symbols),
+        vocab_size=len(cnc_symbols),
         n_speakers=1,
         encoder_hidden_size=384,
         encoder_num_hidden_layers=4,
