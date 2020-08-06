@@ -24,7 +24,7 @@ class Tacotron2Config(object):
 
     def __init__(
         self,
-        vocab_size=len(cnp_symbols),
+        vocab_size=len(cnc_symbols),
         embedding_hidden_size=512,
         initializer_range=0.02,
         layer_norm_eps=1e-6,
