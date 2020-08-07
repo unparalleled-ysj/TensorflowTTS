@@ -24,6 +24,7 @@ class Tacotron2Config(object):
 
     def __init__(
         self,
+        dataset = "chinese_character",
         vocab_size=len(cnc_symbols),
         embedding_hidden_size=512,
         initializer_range=0.02,
@@ -54,7 +55,14 @@ class Tacotron2Config(object):
         postnet_dropout_rate=0.1,
     ):
         """Init parameters for Tacotron-2 model."""
-        self.vocab_size = vocab_size
+        if dataset == "chinese_character":
+            self.vocab_size = vocab_size
+        elif dataset == 'ljspeech':       
+            self.vocab_size = len(en_symbols)
+        elif dataset == 'chinese_phoneme':
+            self.vocab_size = len(cnp_symbols)
+        else:
+            raise ValueError('No such dataset: {}'.format(dataset))
         self.embedding_hidden_size = embedding_hidden_size
         self.initializer_range = initializer_range
         self.layer_norm_eps = layer_norm_eps

@@ -97,8 +97,8 @@ class ChineseProcessor_Phoneme(object):
 
             self.items = items
 
-    def get_one_sample(self, idx):
-        text, wav_file, speaker_name = self.items[idx]
+    def get_one_sample(self, item):
+        text, wav_file, speaker_name = item
 
         # normalize audio signal to be [-1, 1], soundfile already norm.
         audio, rate = sf.read(wav_file)
@@ -111,7 +111,7 @@ class ChineseProcessor_Phoneme(object):
             "raw_text": text,
             "text_ids": text_ids,
             "audio": audio,
-            "utt_id": self.items[idx][1].split("/")[-1].split(".")[0],
+            "utt_id": sos.path.split(wav_file)[-1].split(".")[0],
             "speaker_name": speaker_name,
             "rate": rate,
         }

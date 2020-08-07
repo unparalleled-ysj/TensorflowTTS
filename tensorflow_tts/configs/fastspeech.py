@@ -47,6 +47,7 @@ class FastSpeechConfig(object):
 
     def __init__(
         self,
+        dataset="chinese_character",
         vocab_size=len(cnc_symbols),
         n_speakers=1,
         encoder_hidden_size=384,
@@ -83,7 +84,14 @@ class FastSpeechConfig(object):
     ):
         """Init parameters for Fastspeech model."""
         # encoder params
-        self.vocab_size = vocab_size
+        if dataset == "chinese_character":
+            self.vocab_size = vocab_size
+        elif dataset == 'ljspeech':       
+            self.vocab_size = len(en_symbols)
+        elif dataset == 'chinese_phoneme':
+            self.vocab_size = len(cnp_symbols)
+        else:
+            raise ValueError('No such dataset: {}'.format(dataset))
         self.initializer_range = initializer_range
         self.max_position_embeddings = max_position_embeddings
         self.n_speakers = n_speakers

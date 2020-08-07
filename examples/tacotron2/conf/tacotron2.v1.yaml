@@ -16,6 +16,7 @@ format: "npy"
 model_type: "tacotron2"
 
 tacotron2_params:
+    dataset: "chinese_character"
     embedding_hidden_size: 512
     initializer_range: 0.02
     embedding_dropout_prob: 0.1
@@ -46,7 +47,7 @@ tacotron2_params:
 ###########################################################
 #                  DATA LOADER SETTING                    #
 ###########################################################
-batch_size: 8             # Batch size.
+batch_size: 32             # Batch size.
 remove_short_samples: true # Whether to remove samples the length of which are less than batch_max_steps.
 allow_cache: true          # Whether to allow cache in dataset. If true, it requires cpu memory.
 mel_length_threshold: 32   # remove all targets has mel_length <= 32 
@@ -68,7 +69,7 @@ optimizer_params:
 ###########################################################
 #                    INTERVAL SETTING                     #
 ###########################################################
-train_max_steps: 200000                 # Number of training steps.
+train_max_steps: 400000                 # Number of training steps.
 save_interval_steps: 2000               # Interval steps to save checkpoint.
 eval_interval_steps: 500                # Interval steps to evaluate the network.
 log_interval_steps: 200                 # Interval steps to record the training log.

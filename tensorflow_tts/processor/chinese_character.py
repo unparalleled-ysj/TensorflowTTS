@@ -44,7 +44,7 @@ class ChineseProcessor_Character(object):
 
         items = []
         if root_path is not None:
-            self.speaker_name = os.path.basename(root_path).split('_')[0]
+            self.speaker_name = os.path.basename(root_path)
             for root, _, files in os.walk(os.path.join(root_path, 'data')):
                 for f in files:
                     if f.endswith('.trn'):
@@ -57,8 +57,8 @@ class ChineseProcessor_Character(object):
             self.items = items
 
 
-    def get_one_sample(self, idx):
-        text, wav_file, speaker_name = self.items[idx]
+    def get_one_sample(self, item):
+        text, wav_file, speaker_name = item
 
         # normalize audio signal to be [-1, 1], soundfile already norm.
         audio, rate = sf.read(wav_file)
@@ -71,7 +71,7 @@ class ChineseProcessor_Character(object):
             "raw_text": text,
             "text_ids": text_ids,
             "audio": audio,
-            "utt_id": self.items[idx][1].split("/")[-1].split(".")[0],
+            "utt_id": os.path.split(wav_file)[-1].split(".")[0],
             "speaker_name": speaker_name,
             "rate": rate,
         }
