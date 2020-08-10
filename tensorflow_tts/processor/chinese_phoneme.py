@@ -111,7 +111,7 @@ class ChineseProcessor_Phoneme(object):
             "raw_text": text,
             "text_ids": text_ids,
             "audio": audio,
-            "utt_id": sos.path.split(wav_file)[-1].split(".")[0],
+            "utt_id": os.path.split(wav_file)[-1].split(".")[0],
             "speaker_name": speaker_name,
             "rate": rate,
         }
