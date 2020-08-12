@@ -32,8 +32,3 @@ ljspeech
 /datasets
 /examples/*/exp/
 /temp/
-synthesis_sentences
-inference.py
-tensorflow_serving_inference.py
-save_model_to_pb.py
-saved_models

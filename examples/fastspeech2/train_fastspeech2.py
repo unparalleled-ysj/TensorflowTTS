@@ -314,7 +314,6 @@ def main():
         f0_stat=args.f0_stat,
         energy_stat=args.energy_stat,
         mel_length_threshold=mel_length_threshold,
-        return_utt_id=False,
     ).create(
         is_shuffle=config["is_shuffle"],
         allow_cache=config["allow_cache"],
@@ -331,7 +330,6 @@ def main():
         f0_stat=args.f0_stat,
         energy_stat=args.energy_stat,
         mel_length_threshold=mel_length_threshold,
-        return_utt_id=False,
     ).create(
         is_shuffle=config["is_shuffle"],
         allow_cache=config["allow_cache"],
@@ -350,7 +348,7 @@ def main():
     with STRATEGY.scope():
         # define model
         fastspeech = TFFastSpeech2(
-            config=FastSpeech2Config(**config["fastspeech_params"])
+            config=FastSpeech2Config(**config["fastspeech2_params"])
         )
         fastspeech._build()
         fastspeech.summary()
@@ -381,11 +379,6 @@ def main():
         )
 
         _ = optimizer.iterations
-
-        if args.mixed_precision:
-            optimizer = tf.keras.mixed_precision.experimental.LossScaleOptimizer(
-                optimizer, "dynamic"
-            )
 
     # compile trainer
     trainer.compile(model=fastspeech, optimizer=optimizer)

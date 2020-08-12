@@ -67,6 +67,9 @@ def main():
     parser.add_argument("--batch-size", default=8, type=int, help="batch size.")
     parser.add_argument("--win-front", default=2, type=int, help="win-front.")
     parser.add_argument("--win-back", default=2, type=int, help="win-front.")
+    parser.add_argument(
+        "--use-window-mask", default=1, type=int, help="toggle window masking."
+    )
     parser.add_argument("--save-alignment", default=0, type=int, help="save-alignment.")
     parser.add_argument(
         "--config",
@@ -147,7 +150,7 @@ def main():
         # tacotron2 inference.
         mel_outputs, post_mel_outputs, stop_outputs, alignment_historys = tacotron2(
             **data,
-            use_window_mask=True,
+            use_window_mask=args.use_window_mask,
             win_front=args.win_front,
             win_back=args.win_back,
             training=True,
@@ -160,7 +163,7 @@ def main():
             real_char_length = (
                 input_lengths[i].numpy() - 1
             )  # minus 1 because char have eos tokens.
-            real_mel_length = mel_length[i].numpy()
+            real_mel_length = mel_lengths[i].numpy()
             alignment = alignment[:real_char_length, :real_mel_length]
             d = get_duration_from_alignment(alignment)  # [max_char_len]
 

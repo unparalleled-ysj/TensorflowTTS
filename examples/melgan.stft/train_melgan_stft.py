@@ -260,7 +260,7 @@ def main():
     if config["remove_short_samples"]:
         mel_length_threshold = config["batch_max_steps"] // config[
             "hop_size"
-        ] + 2 * config["generator_params"].get("aux_context_window", 0)
+        ] + 2 * config["melgan_generator_params"].get("aux_context_window", 0)
     else:
         mel_length_threshold = None
 
@@ -324,12 +324,12 @@ def main():
     with STRATEGY.scope():
         # define generator and discriminator
         generator = TFMelGANGenerator(
-            MELGAN_CONFIG.MelGANGeneratorConfig(**config["generator_params"]),
+            MELGAN_CONFIG.MelGANGeneratorConfig(**config["melgan_generator_params"]),
             name="melgan_generator",
         )
 
         discriminator = TFMelGANMultiScaleDiscriminator(
-            MELGAN_CONFIG.MelGANDiscriminatorConfig(**config["discriminator_params"]),
+            MELGAN_CONFIG.MelGANDiscriminatorConfig(**config["melgan_discriminator_params"]),
             name="melgan_discriminator",
         )
 
@@ -356,16 +356,6 @@ def main():
         dis_optimizer = tf.keras.optimizers.Adam(
             learning_rate=discriminator_lr_fn, amsgrad=False
         )
-
-        if args.generator_mixed_precision:
-            gen_optimizer = tf.keras.mixed_precision.experimental.LossScaleOptimizer(
-                gen_optimizer, "dynamic"
-            )
-
-        if args.discriminator_mixed_precision:
-            dis_optimizer = tf.keras.mixed_precision.experimental.LossScaleOptimizer(
-                dis_optimizer, "dynamic"
-            )
 
     trainer.compile(
         gen_model=generator,

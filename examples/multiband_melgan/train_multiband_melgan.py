@@ -363,7 +363,7 @@ def main():
     if config["remove_short_samples"]:
         mel_length_threshold = config["batch_max_steps"] // config[
             "hop_size"
-        ] + 2 * config["generator_params"].get("aux_context_window", 0)
+        ] + 2 * config["multiband_melgan_generator_params"].get("aux_context_window", 0)
     else:
         mel_length_threshold = None
 
@@ -427,17 +427,17 @@ def main():
     with STRATEGY.scope():
         # define generator and discriminator
         generator = TFMelGANGenerator(
-            MultiBandMelGANGeneratorConfig(**config["generator_params"]),
+            MultiBandMelGANGeneratorConfig(**config["multiband_melgan_generator_params"]),
             name="multi_band_melgan_generator",
         )
 
         discriminator = TFMelGANMultiScaleDiscriminator(
-            MultiBandMelGANDiscriminatorConfig(**config["discriminator_params"]),
+            MultiBandMelGANDiscriminatorConfig(**config["multiband_melgan_discriminator_params"]),
             name="multi_band_melgan_discriminator",
         )
 
         pqmf = TFPQMF(
-            MultiBandMelGANGeneratorConfig(**config["generator_params"]), name="pqmf"
+            MultiBandMelGANGeneratorConfig(**config["multiband_melgan_generator_params"]), name="pqmf"
         )
 
         # dummy input to build model.
@@ -466,16 +466,6 @@ def main():
             learning_rate=discriminator_lr_fn,
             amsgrad=config["discriminator_optimizer_params"]["amsgrad"],
         )
-
-        if args.generator_mixed_precision:
-            gen_optimizer = tf.keras.mixed_precision.experimental.LossScaleOptimizer(
-                gen_optimizer, "dynamic"
-            )
-
-        if args.discriminator_mixed_precision:
-            dis_optimizer = tf.keras.mixed_precision.experimental.LossScaleOptimizer(
-                dis_optimizer, "dynamic"
-            )
 
     trainer.compile(
         gen_model=generator,
