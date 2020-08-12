@@ -87,6 +87,7 @@ class TFTacotronConvBatchNorm(tf.keras.layers.Layer):
         self.norm = tf.keras.layers.experimental.SyncBatchNormalization(
             axis=-1, name="batch_norm_._{}".format(name_idx)
         )
+        # self.norm = tf.keras.layers.BatchNormalization()
         self.dropout = tf.keras.layers.Dropout(
             rate=dropout_rate, name="dropout_._{}".format(name_idx)
         )

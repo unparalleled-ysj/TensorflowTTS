@@ -423,6 +423,8 @@ def main():
         tacotron2 = TFTacotron2(config=tacotron_config, training=True, name="tacotron2")
         tacotron2._build()
         tacotron2.summary()
+        # for finetune
+        # tacotron2.load_weights("examples/tacotron2/exp/securities_girl_character/checkpoints/model-200000.h5")
 
         # AdamW for tacotron2
         learning_rate_fn = tf.keras.optimizers.schedules.PolynomialDecay(
