@@ -34,11 +34,13 @@ from tensorflow_tts.processor import LJSpeechProcessor
 from tensorflow_tts.processor import BakerProcessor
 from tensorflow_tts.processor import KSSProcessor
 from tensorflow_tts.processor import LibriTTSProcessor
+from tensorflow_tts.processor import BilingualProcessor
 
 from tensorflow_tts.processor.ljspeech import LJSPEECH_SYMBOLS
 from tensorflow_tts.processor.baker import BAKER_SYMBOLS
 from tensorflow_tts.processor.kss import KSS_SYMBOLS
 from tensorflow_tts.processor.libritts import LIBRITTS_SYMBOLS
+from tensorflow_tts.processor.bilingual import BILINGUAL_SYMBOLS
 
 from tensorflow_tts.utils import remove_outlier
 
@@ -68,8 +70,8 @@ def parse_and_config():
     parser.add_argument(
         "--dataset",
         type=str,
-        default="ljspeech",
-        choices=["ljspeech", "kss", "libritts", "baker"],
+        default="bilingual",
+        choices=["ljspeech", "kss", "libritts", "baker", "bilingual"],
         help="Dataset to preprocess.",
     )
     parser.add_argument(
@@ -345,6 +347,7 @@ def preprocess():
         "kss": KSSProcessor,
         "libritts": LibriTTSProcessor,
         "baker": BakerProcessor,
+        "bilingual": BilingualProcessor,
     }
 
     dataset_symbol = {
@@ -352,6 +355,7 @@ def preprocess():
         "kss": KSS_SYMBOLS,
         "libritts": LIBRITTS_SYMBOLS,
         "baker": BAKER_SYMBOLS,
+        "bilingual": BILINGUAL_SYMBOLS,
     }
 
     dataset_cleaner = {
@@ -359,6 +363,7 @@ def preprocess():
         "kss": "korean_cleaners",
         "libritts": None,
         "baker": None,
+        "bilingual": None,
     }
 
     logging.info(f"Selected '{config['dataset']}' processor.")
@@ -403,7 +408,7 @@ def preprocess():
     logging.info(f"Training items: {len(train_split)}")
     logging.info(f"Validation items: {len(valid_split)}")
 
-    get_utt_id = lambda x: os.path.split(x[1])[-1].split(".")[0]
+    get_utt_id = lambda x: x[2] + '-' + os.path.split(x[1])[-1].split(".")[0]
     train_utt_ids = [get_utt_id(x) for x in train_split]
     valid_utt_ids = [get_utt_id(x) for x in valid_split]
 

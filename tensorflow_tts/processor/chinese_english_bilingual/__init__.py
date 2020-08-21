@@ -1,0 +1,3 @@
+from tensorflow_tts.processor.chinese_english_bilingual.cmudict import CMUDict, cmu_phoneme
+from tensorflow_tts.processor.chinese_english_bilingual.thchsdict import THCHSDict, thchs_phoneme
+from tensorflow_tts.processor.chinese_english_bilingual.text_normalization.normalization import text2pinyin
