@@ -75,6 +75,9 @@ class BilingualProcessor(BaseProcessor):
         }
         return sample
 
+    def setup_eos_token(self):
+        return _eos[0]
+
     def text_to_sequence(self, text, mode='inference', show_phoneme=False):
         if mode == 'inference' or mode == 'phoneme':
             pinyin = self.text2pinyin(text)
