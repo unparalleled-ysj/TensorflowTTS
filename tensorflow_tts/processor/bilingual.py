@@ -52,7 +52,7 @@ class BilingualProcessor(BaseProcessor):
         wave_file = content[self.positions["file"]]
         text = content[self.positions["text"]]
         speaker_name = content[self.positions["speaker_name"]]
-        wav_path = os.path.join(self.data_dir, 'wavs', f"{wave_file}.wav")
+        wav_path = os.path.join(self.data_dir, 'wavs', f"{wave_file + self.f_extension}")
         return text, wav_path, speaker_name
 
     def get_one_sample(self, item):
@@ -84,7 +84,7 @@ class BilingualProcessor(BaseProcessor):
             phoneme = [self.get_phoneme(self.thchsdict, cn) for cn in pinyin.split(' ')]
             phoneme = ' '.join([self.get_arpabet(self.cmudict, en) for en in phoneme])
             if show_phoneme:
-                print(f"{pinyin} \n Convert to : \n {phoneme}")
+                print(f"{pinyin} \nConvert to : \n {phoneme}")
             if mode == 'phoneme':
                 return self.remove_punctuation(phoneme)
             phoneme = self.punctuation2silence(phoneme)

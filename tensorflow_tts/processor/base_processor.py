@@ -55,15 +55,15 @@ class BaseProcessor(abc.ABC):
         if self.symbols.__len__() < 1:
             raise DataProcessorError("Symbols list is empty but mapper isn't loaded")
 
+        # processor name. usefull to use it for AutoProcessor
+        self._processor_name = type(self).__name__
+
         self.create_items()
         self.create_speaker_map()
         self.reverse_speaker = {v: k for k, v in self.speakers_map.items()}
         self.create_symbols()
         if self.saved_mapper_path is not None:
             self._save_mapper(saved_path=self.saved_mapper_path)
-
-        # processor name. usefull to use it for AutoProcessor
-        self._processor_name = type(self).__name__
 
         if self.setup_eos_token():
             self.add_symbol(
