@@ -18,10 +18,10 @@ _pause = ["sp", "np", "lp"]
 BILINGUAL_SYMBOLS = _pad + _pause + thchs_phoneme + cmu_phoneme + _eos
 
 pause_punctuation = {
-    "？": "lp",
-    "！": "lp",
+    "？": "np",
+    "！": "np",
     "，": "np",
-    "。": "lp",
+    "。": "np",
     "：": "sp",
     "、": "sp",
     "；": "np",
