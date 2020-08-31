@@ -6,7 +6,7 @@
 .\#*
 *DS_Store
 out.txt
-TensorflowTTS.egg-info/
+TensorflowTTS.egg-info
 doc/_build
 slurm-*.out
 tmp*
