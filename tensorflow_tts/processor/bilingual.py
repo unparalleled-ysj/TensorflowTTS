@@ -18,13 +18,13 @@ _pause = ["sp", "np", "lp"]
 BILINGUAL_SYMBOLS = _pad + _pause + thchs_phoneme + cmu_phoneme + _eos
 
 pause_punctuation = {
-    "？": "np",
-    "！": "np",
-    "，": "np",
-    "。": "np",
+    "？": "sp",
+    "！": "sp",
+    "，": "sp",
+    "。": "sp",
     "：": "sp",
     "、": "sp",
-    "；": "np",
+    "；": "sp",
 }
 
 @dataclass
@@ -88,6 +88,7 @@ class BilingualProcessor(BaseProcessor):
             if mode == 'phoneme':
                 return self.remove_punctuation(phoneme)
             phoneme = self.punctuation2silence(phoneme)
+            phoneme = 'sp ' + phoneme
             if show_phoneme:
                 print(f"Convert punctuation to silence : \n {phoneme}")
         else:
@@ -97,6 +98,7 @@ class BilingualProcessor(BaseProcessor):
         sequence += self.symbols_to_sequence(phoneme)
         # add eos tokens
         sequence += [self.eos_id]
+
         return sequence
     
     def symbols_to_sequence(self, symbols):
