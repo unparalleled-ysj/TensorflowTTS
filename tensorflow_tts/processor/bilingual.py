@@ -25,6 +25,10 @@ pause_punctuation = {
     "：": "np",
     "、": "np",
     "；": "np",
+    ",": "np",
+    ".": "np",
+    "?": "np",
+    "!": "np",
 }
 
 @dataclass

@@ -16,7 +16,7 @@ cmu_phoneme = [
 upper_alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
                   'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
-punctuation = ['！', '、', '‘', '’', '（', '）', '，', '。', '：', '；', '“', '”', '？', '《', '》', '-', '.', '@']
+punctuation = ['！', '、', '‘', '’', '（', '）', '，', '。', '：', '；', '“', '”', '？', '《', '》', '-', '.', ',', '!', '?']
 
 _valid_symbol_set = set(cmu_phoneme)
 
@@ -39,7 +39,7 @@ class CMUDict:
 
     def lookup(self, word):
         '''Returns list of ARPAbet pronunciations of the given word.'''
-        result = self._entries.get(word)
+        result = self._entries.get(word.replace("‘", "'"))
         if result is not None:
             return result
         elif is_upper_alphabet(word):

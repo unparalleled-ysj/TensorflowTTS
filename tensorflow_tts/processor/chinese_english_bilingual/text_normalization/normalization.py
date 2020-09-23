@@ -5,6 +5,7 @@ import pypinyin as py
 import re
 from .cn_tn import NSWNormalizer
 split_character = ['，', '。', '？', '！', ' ', '、', '；', '：']
+punctuation = ['！', '、', '’', '（', '）', '，', '。', '：', '；', '“', '”', '？', '《', '》', '-', '.', ',', '!', '?']
 _whitespace_re = re.compile(r'\s+')
 
 
@@ -13,6 +14,9 @@ def text2pinyin(text):
     text = NSWNormalizer(text).normalize()
     text = special_symbol_clean(text)
     text = text.upper()
+    for p in punctuation:
+        text = text.replace(p, f" {p} ")
+    text = collapse_whitespace(text)
     pinyin = get_pinyin(text)
     return pinyin
 
@@ -48,7 +52,7 @@ def collapse_whitespace(text):
 
 def special_symbol_clean(text):
     text = text.replace('www.', '三W点')
-    text = text.replace('.', '点')
-    text = text.replace('@', 'at ')
+    # text = text.replace('.', '点')
+    text = text.replace('@', ' at ')
     # text = text.replace('-', '杠')
     return text
