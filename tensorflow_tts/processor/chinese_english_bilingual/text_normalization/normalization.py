@@ -5,7 +5,7 @@ import pypinyin as py
 import re
 from .cn_tn import NSWNormalizer
 split_character = ['，', '。', '？', '！', ' ', '、', '；', '：']
-punctuation = ['！', '、', '’', '（', '）', '，', '。', '：', '；', '“', '”', '？', '《', '》', '-', '.', ',', '!', '?']
+punctuation = ['！', '、', '（', '）', '，', '。', '：', '；', '“', '”', '？', '《', '》', '-', '.', ',', '!', '?']
 _whitespace_re = re.compile(r'\s+')
 
 
