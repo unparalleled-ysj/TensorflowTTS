@@ -92,7 +92,7 @@ discriminator_optimizer_params:
     lr_fn: "PiecewiseConstantDecay"
     lr_params: 
         boundaries: [1000, 5000, 10000, 20000]
-        values: [0.0000000005, 0.0000000005, 0.0000000005, 0.0000000005, 0.0000000005]
+        values: [0.000001, 0.000000001, 0.0000000005, 0.0000000005, 0.0000000005]
     amsgrad: false
 
 ###########################################################
@@ -101,7 +101,7 @@ discriminator_optimizer_params:
 discriminator_train_start_steps: 0     # steps begin training discriminator
 train_max_steps: 50000                 # Number of training steps.
 save_interval_steps: 5000               # Interval steps to save checkpoint.
-eval_interval_steps: 2000                # Interval steps to evaluate the network.
+eval_interval_steps: 1000                # Interval steps to evaluate the network.
 log_interval_steps: 100                  # Interval steps to record the training log.
 
 ###########################################################
