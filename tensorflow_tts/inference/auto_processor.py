@@ -24,6 +24,7 @@ from tensorflow_tts.processor import (
     BakerProcessor,
     LibriTTSProcessor,
     BilingualProcessor,
+    MinNanProcessor,
 )
 
 CONFIG_MAPPING = OrderedDict(
@@ -33,6 +34,7 @@ CONFIG_MAPPING = OrderedDict(
         ("BakerProcessor", BakerProcessor),
         ("LibriTTSProcessor", LibriTTSProcessor),
         ("BilingualProcessor", BilingualProcessor),
+        ("MinNanProcessor", MinNanProcessor),
     ]
 )
 

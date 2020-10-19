@@ -6,7 +6,7 @@ import re
 from .cn_tn import NSWNormalizer
 split_character = ['，', '。', '？', '！', ' ', '、', '；', '：']
 punctuation = ['！', '、', '（', '）', '，', '。', '：', '；', '“', '”', '？', '《', '》', '-', '.', ',', '!', '?']
-_whitespace_re = re.compile(r'\s+')
+whitespace_re = re.compile(r'\s+')
 
 
 def text2pinyin(text):
@@ -47,7 +47,7 @@ def text_segment(text, position=200, max_len=200, split_text=[]):
 
 
 def collapse_whitespace(text):
-    return re.sub(_whitespace_re, ' ', text)
+    return re.sub(whitespace_re, ' ', text)
 
 
 def special_symbol_clean(text):

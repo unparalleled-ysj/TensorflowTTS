@@ -19,6 +19,7 @@ from tensorflow_tts.processor.kss import KSS_SYMBOLS as kss_symbols
 from tensorflow_tts.processor.baker import BAKER_SYMBOLS as bk_symbols
 from tensorflow_tts.processor.libritts import LIBRITTS_SYMBOLS as lbri_symbols
 from tensorflow_tts.processor.bilingual import BILINGUAL_SYMBOLS as bil_symbols
+from tensorflow_tts.processor.minnan import MINNAN_SYMBOLS as minnan_symbols
 
 
 class Tacotron2Config(object):
@@ -67,6 +68,8 @@ class Tacotron2Config(object):
             self.vocab_size = len(lbri_symbols)
         elif dataset == "bilingual":
             self.vocab_size = len(bil_symbols)
+        elif dataset == "minnan":
+            self.vocab_size = len(minnan_symbols)
         else:
             raise ValueError("No such dataset: {}".format(dataset))
         self.embedding_hidden_size = embedding_hidden_size

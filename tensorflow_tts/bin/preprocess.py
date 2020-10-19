@@ -35,12 +35,14 @@ from tensorflow_tts.processor import BakerProcessor
 from tensorflow_tts.processor import KSSProcessor
 from tensorflow_tts.processor import LibriTTSProcessor
 from tensorflow_tts.processor import BilingualProcessor
+from tensorflow_tts.processor import MinNanProcessor
 
 from tensorflow_tts.processor.ljspeech import LJSPEECH_SYMBOLS
 from tensorflow_tts.processor.baker import BAKER_SYMBOLS
 from tensorflow_tts.processor.kss import KSS_SYMBOLS
 from tensorflow_tts.processor.libritts import LIBRITTS_SYMBOLS
 from tensorflow_tts.processor.bilingual import BILINGUAL_SYMBOLS
+from tensorflow_tts.processor.minnan import MINNAN_SYMBOLS
 
 from tensorflow_tts.utils import remove_outlier
 
@@ -71,7 +73,7 @@ def parse_and_config():
         "--dataset",
         type=str,
         default="bilingual",
-        choices=["ljspeech", "kss", "libritts", "baker", "bilingual"],
+        choices=["ljspeech", "kss", "libritts", "baker", "bilingual", "minnan"],
         help="Dataset to preprocess.",
     )
     parser.add_argument(
@@ -352,6 +354,7 @@ def preprocess():
         "libritts": LibriTTSProcessor,
         "baker": BakerProcessor,
         "bilingual": BilingualProcessor,
+        "minnan": MinNanProcessor,
     }
 
     dataset_symbol = {
@@ -360,6 +363,7 @@ def preprocess():
         "libritts": LIBRITTS_SYMBOLS,
         "baker": BAKER_SYMBOLS,
         "bilingual": BILINGUAL_SYMBOLS,
+        "minnan": MINNAN_SYMBOLS,
     }
 
     dataset_cleaner = {
@@ -368,6 +372,7 @@ def preprocess():
         "libritts": None,
         "baker": None,
         "bilingual": None,
+        "minnan": None,
     }
 
     logging.info(f"Selected '{config['dataset']}' processor.")

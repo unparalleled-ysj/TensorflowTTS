@@ -34,10 +34,12 @@ ljspeech
 /examples/*/exp/
 mfa/
 synthesis_sentences
+synthesis_sentences_minnan
 saved_models
 training_data_old
 training_data
 dataset_process
 train_scripts
 test_scripts
+tensorflow_tts/processor/minnan_frontend
 

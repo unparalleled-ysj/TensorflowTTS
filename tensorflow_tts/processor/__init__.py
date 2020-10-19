@@ -5,3 +5,4 @@ from tensorflow_tts.processor.baker import BakerProcessor
 from tensorflow_tts.processor.kss import KSSProcessor
 from tensorflow_tts.processor.libritts import LibriTTSProcessor
 from tensorflow_tts.processor.bilingual import BilingualProcessor
+from tensorflow_tts.processor.minnan import MinNanProcessor
