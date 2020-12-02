@@ -35,7 +35,8 @@ ljspeech
 mfa/
 synthesis_sentences
 synthesis_sentences_minnan
-saved_models
+saved_models_pb
+saved_models_lite
 training_data_old
 training_data
 dataset_process
