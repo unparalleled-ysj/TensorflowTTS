@@ -42,3 +42,4 @@ dataset_process
 train_scripts
 test_scripts
 tensorflow_tts/processor/minnan_frontend
+M2Voc
