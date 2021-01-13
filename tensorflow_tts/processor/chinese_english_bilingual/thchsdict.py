@@ -12,7 +12,7 @@ thchs_phoneme = [
     'ei1', 'ei2', 'ei3', 'ei4', 'ei5', 
     'en1', 'en2', 'en3', 'en4', 'en5', 
     'eng1', 'eng2', 'eng3', 'eng4', 'eng5', 
-    'er2', 'er3', 'er4', 'er5', 
+    'er1', 'er2', 'er3', 'er4', 'er5', 
     'f', 'g', 'h', 
     'i1', 'i2', 'i3', 'i4', 'i5', 'ii',
     'ia1', 'ia2', 'ia3', 'ia4', 'ia5', 

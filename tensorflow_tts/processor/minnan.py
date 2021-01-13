@@ -68,8 +68,8 @@ class MinNanProcessor(BaseProcessor):
             "raw_text": text,
             "text_ids": text_ids,
             "audio": audio,
-            "utt_id": speaker_name + '-' + os.path.split(wav_path)[-1].split(".")[0],
-            "speaker_name": speaker_name,
+            "utt_id": os.path.split(wav_path)[-1].split(".")[0],
+            "speaker_id": self.get_speaker_id(speaker_name),
             "rate": rate
         }
         return sample
@@ -77,7 +77,7 @@ class MinNanProcessor(BaseProcessor):
     def setup_eos_token(self):
         return _eos[0]
 
-    def text_to_sequence(self, text, mode='inference', show_phoneme=False):
+    def text_to_sequence(self, text, mode='inference', show_phoneme=False, input_is_pinyin=True):
         if mode == 'inference':
             phoneme = self.text2phoneme(text, show_wordsegment=show_phoneme)
             if show_phoneme:

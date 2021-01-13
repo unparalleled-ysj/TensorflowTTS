@@ -25,7 +25,7 @@ multiband_melgan_generator_params:
     out_channels: 4               # Number of output channels (number of subbands).
     kernel_size: 7                # Kernel size of initial and final conv layers.
     filters: 384                  # Initial number of channels for conv layers.
-    upsample_scales: [2, 5, 5]    # List of Upsampling scales.
+    upsample_scales: [5, 5, 2]    # List of Upsampling scales.
     stack_kernel_size: 3          # Kernel size of dilated conv layers in residual stack.
     stacks: 4                     # Number of stacks in a single residual stack module.
     is_weight_norm: false         # Use weight-norm or not.
@@ -85,7 +85,7 @@ generator_optimizer_params:
     lr_fn: "PiecewiseConstantDecay"
     lr_params: 
         boundaries: [1000, 5000, 10000, 20000]
-        values: [0.00000000001, 0.000000000005, 0.000000000002, 0.0000000000005, 0.0000000000002]
+        values: [0.0001, 0.00005, 0.00002, 0.000005, 0.0000002]
     amsgrad: false
 
 discriminator_optimizer_params:

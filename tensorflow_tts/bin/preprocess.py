@@ -420,10 +420,11 @@ def preprocess():
             random_state=42,
             shuffle=True,
         )
+    # train_split = processor.items
     logging.info(f"Training items: {len(train_split)}")
     logging.info(f"Validation items: {len(valid_split)}")
 
-    get_utt_id = lambda x: x[2] + '-' + os.path.split(x[1])[-1].split(".")[0]
+    get_utt_id = lambda x: os.path.split(x[1])[-1].split(".wav")[0]
     train_utt_ids = [get_utt_id(x) for x in train_split]
     valid_utt_ids = [get_utt_id(x) for x in valid_split]
 

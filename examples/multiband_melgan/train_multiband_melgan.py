@@ -429,6 +429,7 @@ def main():
         ),
         allow_cache=config["allow_cache"],
         batch_size=config["batch_size"] * STRATEGY.num_replicas_in_sync,
+        drop_remainder=False,
     )
 
     # define trainer

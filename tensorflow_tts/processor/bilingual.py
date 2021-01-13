@@ -48,15 +48,20 @@ class BilingualProcessor(BaseProcessor):
 
     def create_items(self):
         if self.data_dir:
-            with open(os.path.join(self.data_dir, self.train_f_name), encoding='utf-8') as f:
-                self.items = [self.split_line(self.data_dir, line, self.delimiter) for line in f]
+            self.items = []
+            data_list = self.data_dir.split('|')
+            root_dir = data_list[0]
+            for data_set in data_list[1:]:
+                data_dir = os.path.join(root_dir, data_set)
+                with open(os.path.join(data_dir, self.train_f_name), encoding='utf-8') as f:
+                    self.items.extend([self.split_line(data_dir, line, self.delimiter) for line in f])
     
     def split_line(self, data_dir, line, split):
         content = line.strip().split(split)
         wave_file = content[self.positions["file"]]
         text = content[self.positions["text"]]
         speaker_name = content[self.positions["speaker_name"]]
-        wav_path = os.path.join(self.data_dir, 'wavs', f"{wave_file + self.f_extension}")
+        wav_path = os.path.join(data_dir, 'wavs', f"{wave_file + self.f_extension}")
         return text, wav_path, speaker_name
 
     def get_one_sample(self, item):
@@ -73,8 +78,8 @@ class BilingualProcessor(BaseProcessor):
             "raw_text": text,
             "text_ids": text_ids,
             "audio": audio,
-            "utt_id": speaker_name + '-' + os.path.split(wav_path)[-1].split(".")[0],
-            "speaker_name": speaker_name,
+            "utt_id": os.path.split(wav_path)[-1].split(".wav")[0],
+            "speaker_id": self.get_speaker_id(speaker_name),
             "rate": rate
         }
         return sample
@@ -82,9 +87,12 @@ class BilingualProcessor(BaseProcessor):
     def setup_eos_token(self):
         return _eos[0]
 
-    def text_to_sequence(self, text, mode='inference', show_phoneme=False):
+    def text_to_sequence(self, text, mode='inference', show_phoneme=False, input_is_pinyin=False):
         if mode == 'inference' or mode == 'phoneme':
-            pinyin = self.text2pinyin(text)
+            if input_is_pinyin:
+                pinyin = text
+            else:
+                pinyin = self.text2pinyin(text)
             phoneme = [self.get_phoneme(self.thchsdict, cn) for cn in pinyin.split(' ')]
             phoneme = ' '.join([self.get_arpabet(self.cmudict, en) for en in phoneme])
             if show_phoneme:

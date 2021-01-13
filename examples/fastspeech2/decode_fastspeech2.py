@@ -112,14 +112,15 @@ def main():
         charactor_query=char_query,
         charactor_load_fn=char_load_fn,
     )
-    dataset = dataset.create(batch_size=args.batch_size)
+    dataset = dataset.create(batch_size=args.batch_size, drop_remainder=False)
 
     # define model and load checkpoint
     fastspeech2 = TFFastSpeech2(
         config=FastSpeech2Config(**config["fastspeech2_params"]), name="fastspeech2"
     )
+    # fastspeech2.resize_positional_embeddings(5000)
     fastspeech2._build()
-    fastspeech2.load_weights(args.checkpoint)
+    fastspeech2.load_weights(args.checkpoint, by_name=True, skip_mismatch=True)
 
     for data in tqdm(dataset, desc="Decoding"):
         utt_ids = data["utt_ids"]
@@ -151,13 +152,13 @@ def main():
             real_length = durations.numpy().sum()
             utt_id = utt_id.numpy().decode("utf-8")
             # save to folder.
+            # np.save(
+            #     os.path.join(args.outdir, f"{utt_id}-fs-before-feats.npy"),
+            #     mel_before[:real_length, :].astype(np.float32),
+            #     allow_pickle=False,
+            # )
             np.save(
-                os.path.join(args.outdir, f"{utt_id}-fs-before-feats.npy"),
-                mel_before[:real_length, :].astype(np.float32),
-                allow_pickle=False,
-            )
-            np.save(
-                os.path.join(args.outdir, f"{utt_id}-fs-after-feats.npy"),
+                os.path.join(args.outdir, f"{utt_id}-gen-feats.npy"),
                 mel_after[:real_length, :].astype(np.float32),
                 allow_pickle=False,
             )

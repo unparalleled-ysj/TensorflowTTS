@@ -14,11 +14,7 @@
 # limitations under the License.
 """Dataset modules."""
 
-import itertools
-import logging
 import os
-import random
-
 import numpy as np
 import tensorflow as tf
 
@@ -63,6 +59,7 @@ class CharactorDurationF0EnergyMelDataset(AbstractDataset):
         f0_load_fn=np.load,
         energy_load_fn=np.load,
         mel_length_threshold=0,
+        speakers_map=None
     ):
         """Initialize dataset.
 
@@ -81,6 +78,7 @@ class CharactorDurationF0EnergyMelDataset(AbstractDataset):
             f0_load_fn (func): Function to load f0 file.
             energy_load_fn (func): Function to load energy file.
             mel_length_threshold (int): Threshold to remove short feature files.
+            speakers_map (dict): Speakers map generated in dataset preprocessing.
 
         """
         # find all of charactor and mel files.
@@ -100,6 +98,9 @@ class CharactorDurationF0EnergyMelDataset(AbstractDataset):
             == len(energy_files)
         ), f"Number of charactor, mel, duration, f0 and energy files are different"
 
+        
+        assert speakers_map != None, f" ERROR! no speakers map found. "
+
         if ".npy" in charactor_query:
             suffix = charactor_query[1:]
             utt_ids = [os.path.basename(f).replace(suffix, "") for f in charactor_files]
@@ -117,7 +118,9 @@ class CharactorDurationF0EnergyMelDataset(AbstractDataset):
         self.f0_load_fn = f0_load_fn
         self.energy_load_fn = energy_load_fn
         self.mel_length_threshold = mel_length_threshold
-
+        self.speakers_map = speakers_map
+        self.speakers = [self.speakers_map['-'.join(i.split("-")[:-1])] for i in self.utt_ids]
+        # print("Speaker: utt_id", list(zip(self.speakers, self.utt_ids)))
         self.f0_stat = np.load(f0_stat)
         self.energy_stat = np.load(energy_stat)
 
@@ -141,6 +144,7 @@ class CharactorDurationF0EnergyMelDataset(AbstractDataset):
             duration_file = self.duration_files[i]
             f0_file = self.f0_files[i]
             energy_file = self.energy_files[i]
+            speaker_id = self.speakers[i]
 
             items = {
                 "utt_ids": utt_id,
@@ -149,6 +153,7 @@ class CharactorDurationF0EnergyMelDataset(AbstractDataset):
                 "duration_files": duration_file,
                 "f0_files": f0_file,
                 "energy_files": energy_file,
+                "speaker_ids": speaker_id,
             }
 
             yield items
@@ -173,7 +178,7 @@ class CharactorDurationF0EnergyMelDataset(AbstractDataset):
         items = {
             "utt_ids": items["utt_ids"],
             "input_ids": charactor,
-            "speaker_ids": 0,
+            "speaker_ids": items["speaker_ids"],
             "duration_gts": duration,
             "f0_gts": f0,
             "energy_gts": energy,
@@ -190,6 +195,7 @@ class CharactorDurationF0EnergyMelDataset(AbstractDataset):
         is_shuffle=False,
         map_fn=None,
         reshuffle_each_iteration=True,
+        drop_remainder=True,
     ):
         """Create tf.dataset function."""
         output_types = self.get_output_dtypes()
@@ -228,7 +234,7 @@ class CharactorDurationF0EnergyMelDataset(AbstractDataset):
         }
 
         datasets = datasets.padded_batch(
-            batch_size, padded_shapes=padded_shapes, drop_remainder=True
+            batch_size, padded_shapes=padded_shapes, drop_remainder=drop_remainder
         )
         datasets = datasets.prefetch(tf.data.experimental.AUTOTUNE)
         return datasets
@@ -241,6 +247,7 @@ class CharactorDurationF0EnergyMelDataset(AbstractDataset):
             "duration_files": tf.string,
             "f0_files": tf.string,
             "energy_files": tf.string,
+            "speaker_ids": tf.int32,
         }
         return output_types
 

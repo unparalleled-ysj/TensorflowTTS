@@ -96,7 +96,7 @@ class BaseProcessor(abc.ABC):
         return self.speakers_map[name]
 
     def get_speaker_name(self, speaker_id: int) -> str:
-        return self.speakers_map[speaker_id]
+        return self.reverse_speaker[speaker_id]
 
     def create_symbols(self):
         self.symbol_to_id = {s: i for i, s in enumerate(self.symbols)}
@@ -195,6 +195,7 @@ class BaseProcessor(abc.ABC):
         with open(loaded_path, "r") as f:
             data = json.load(f)
         self.speakers_map = data["speakers_map"]
+        self.reverse_speaker = {v: k for k, v in self.speakers_map.items()}
         self.symbol_to_id = data["symbol_to_id"]
         self.id_to_symbol = {int(k): v for k, v in data["id_to_symbol"].items()}
         self._processor_name = data["processor_name"]

@@ -30,7 +30,6 @@ import os
 
 import numpy as np
 import yaml
-import json
 from tqdm import tqdm
 
 import tensorflow_tts
@@ -40,21 +39,14 @@ from tensorflow_tts.configs import FastSpeech2Config
 from tensorflow_tts.models import TFFastSpeech2
 from tensorflow_tts.optimizers import AdamWeightDecay, WarmUp
 from tensorflow_tts.trainers import Seq2SeqBasedTrainer
-from tensorflow_tts.utils import calculate_2d_loss, calculate_3d_loss, return_strategy, TFGriffinLim
+from tensorflow_tts.utils import calculate_2d_loss, calculate_3d_loss, return_strategy
 
 
 class FastSpeech2Trainer(Seq2SeqBasedTrainer):
     """FastSpeech2 Trainer class based on FastSpeechTrainer."""
 
     def __init__(
-        self,
-        config,
-        strategy,
-        steps=0,
-        epochs=0,
-        is_mixed_precision=False,
-        stats_path: str = "",
-        dataset_config: str = "",
+        self, config, strategy, steps=0, epochs=0, is_mixed_precision=False,
     ):
         """Initialize trainer.
         Args:
@@ -81,19 +73,6 @@ class FastSpeech2Trainer(Seq2SeqBasedTrainer):
         self.init_train_eval_metrics(self.list_metrics_name)
         self.reset_states_train()
         self.reset_states_eval()
-        self.use_griffin = config.get("use_griffin", False)
-        self.griffin_lim_tf = None
-        if self.use_griffin:
-            logging.info(
-                f"Load griff stats from {stats_path} and config from {dataset_config}"
-            )
-            self.griff_conf = yaml.load(open(dataset_config), Loader=yaml.Loader)
-            self.prepare_grim(stats_path, self.griff_conf)
-
-    def prepare_grim(self, stats_path, config):
-        if not stats_path:
-            raise KeyError("stats path need to exist")
-        self.griffin_lim_tf = TFGriffinLim(stats_path, config)
 
     def compile(self, model, optimizer):
         super().compile(model, optimizer)
@@ -167,13 +146,6 @@ class FastSpeech2Trainer(Seq2SeqBasedTrainer):
             utt_ids = utt_ids.numpy()
 
         # check directory
-        if self.use_griffin:
-            griff_dir_name = os.path.join(
-                self.config["outdir"], f"predictions/{self.steps}_wav"
-            )
-            if not os.path.exists(griff_dir_name):
-                os.makedirs(griff_dir_name)
-
         dirname = os.path.join(self.config["outdir"], f"predictions/{self.steps}steps")
         if not os.path.exists(dirname):
             os.makedirs(dirname)
@@ -181,25 +153,6 @@ class FastSpeech2Trainer(Seq2SeqBasedTrainer):
         for idx, (mel_gt, mel_before, mel_after) in enumerate(
             zip(mel_gts, mels_before, mels_after), 0
         ):
-            if self.use_griffin:
-                utt_id = utt_ids[idx]
-                grif_before = self.griffin_lim_tf(
-                    tf.reshape(mel_before, [-1, 80])[tf.newaxis, :], n_iter=32
-                )
-                grif_after = self.griffin_lim_tf(
-                    tf.reshape(mel_after, [-1, 80])[tf.newaxis, :], n_iter=32
-                )
-                grif_gt = self.griffin_lim_tf(
-                    tf.reshape(mel_gt, [-1, 80])[tf.newaxis, :], n_iter=32
-                )
-                self.griffin_lim_tf.save_wav(
-                    grif_before, griff_dir_name, f"{utt_id}_before"
-                )
-                self.griffin_lim_tf.save_wav(
-                    grif_after, griff_dir_name, f"{utt_id}_after"
-                )
-                self.griffin_lim_tf.save_wav(grif_gt, griff_dir_name, f"{utt_id}_gt")
-
             mel_gt = tf.reshape(mel_gt, (-1, 80)).numpy()  # [length, 80]
             mel_before = tf.reshape(mel_before, (-1, 80)).numpy()  # [length, 80]
             mel_after = tf.reshape(mel_after, (-1, 80)).numpy()  # [length, 80]
@@ -285,15 +238,6 @@ def main():
         help="using mixed precision for generator or not.",
     )
     parser.add_argument(
-        "--dataset_config", default="preprocess/bilingual_preprocess.yaml", type=str,
-    )
-    parser.add_argument(
-        "--dataset_stats", default="./dump/stats.npy", type=str,
-    )
-    parser.add_argument(
-        "--dataset_mapping", default="./dump/bilingual_mapper.npy", type=str,
-    )
-    parser.add_argument(
         "--pretrained",
         default="",
         type=str,
@@ -369,18 +313,6 @@ def main():
     else:
         raise ValueError("Only npy are supported.")
 
-    # load speakers map from dataset map
-    with open(args.dataset_mapping) as f:
-        dataset_mapping = json.load(f)
-        speakers_map = dataset_mapping["speakers_map"]
-
-    # Check n_speakers matches number of speakers in speakers_map
-    n_speakers = config["fastspeech2_params"]["n_speakers"]
-    assert n_speakers == len(
-        speakers_map
-    ), f"Number of speakers in dataset does not match n_speakers in config"
-
-
     # define train/valid dataset
     train_dataset = CharactorDurationF0EnergyMelDataset(
         root_dir=args.train_dir,
@@ -392,7 +324,6 @@ def main():
         f0_stat=args.f0_stat,
         energy_stat=args.energy_stat,
         mel_length_threshold=mel_length_threshold,
-        speakers_map=speakers_map,
     ).create(
         is_shuffle=config["is_shuffle"],
         allow_cache=config["allow_cache"],
@@ -411,12 +342,10 @@ def main():
         f0_stat=args.f0_stat,
         energy_stat=args.energy_stat,
         mel_length_threshold=mel_length_threshold,
-        speakers_map=speakers_map,
     ).create(
         is_shuffle=config["is_shuffle"],
         allow_cache=config["allow_cache"],
         batch_size=config["batch_size"] * STRATEGY.num_replicas_in_sync,
-        drop_remainder=False,
     )
 
     # define trainer
@@ -426,8 +355,6 @@ def main():
         steps=0,
         epochs=0,
         is_mixed_precision=args.mixed_precision,
-        stats_path=args.dataset_stats,
-        dataset_config=args.dataset_config,
     )
 
     with STRATEGY.scope():
